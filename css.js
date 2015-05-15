@@ -63,10 +63,10 @@ if(loader.env === 'production') {
 					});
 				}
 
-        // For server-side rendering, register this module.
-        register(load.name, "css", function(){
-          return style.cloneNode(true);
-        });
+				// For server-side rendering, register this module.
+				register(load.name, "css", function(){
+					return style.cloneNode(true);
+				});
 			}
 
 			return System.newModule({source: source});
