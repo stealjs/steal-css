@@ -1,24 +1,31 @@
 {
-  "name": "steal-css",
-  "version": "0.0.1",
-  "description": "A CSS plugin, for css",
-  "main": "css.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/stealjs/system-css.git"
-  },
-  "keywords": [
-    "StealJS",
-    "SystemJS",
-    "CSS"
-  ],
-  "author": "Bitovi",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/stealjs/system-css/issues"
-  },
-  "homepage": "https://github.com/stealjs/system-css"
+	"name":"steal-css",
+	"version":"0.0.1",
+	"description":"css plugin for StealJS and SystemJS",
+	"main":"css.js",
+	"scripts":{
+		"test": "grunt test"
+	},
+	"repository":{
+		"type":"git",
+		"url":"https://github.com/stealjs/steal-css.git"
+	},
+	"keywords":[
+		"StealJS",
+		"SystemJS",
+		"CSS"
+	],
+	"author":"Bitovi",
+	"license":"MIT",
+	"bugs":{
+		"url":"https://github.com/stealjs/steal-css/issues"
+	},
+	"homepage":"https://github.com/stealjs/steal-css",
+	"devDependencies":{
+		"bower":"^1.4.1",
+		"grunt": "^0.4.5",
+		"steal":"^0.10.1",
+		"testee": "^0.1.7",
+		"systemjs":"bitovi/systemjs#b664e4cd359c013acb3445627d1e1e1799424542"
+	}
 }
