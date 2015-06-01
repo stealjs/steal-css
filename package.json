@@ -4,7 +4,7 @@
 	"description":"css plugin for StealJS and SystemJS",
 	"main":"css.js",
 	"scripts":{
-		"test":"echo \"Error: no test specified\" && exit 1"
+		"test": "grunt test"
 	},
 	"repository":{
 		"type":"git",
@@ -23,7 +23,9 @@
 	"homepage":"https://github.com/stealjs/steal-css",
 	"devDependencies":{
 		"bower":"^1.4.1",
+		"grunt": "^0.4.5",
 		"steal":"^0.10.1",
+		"testee": "^0.1.7",
 		"systemjs":"bitovi/systemjs#b664e4cd359c013acb3445627d1e1e1799424542"
 	}
 }
