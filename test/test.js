@@ -1,4 +1,4 @@
-QUnit.module("system-css plugin");
+QUnit.module("steal-css plugin");
 
 var makeIframe = function(src){
 	var iframe = document.createElement('iframe');
