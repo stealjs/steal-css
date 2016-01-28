@@ -1,3 +1,6 @@
 #test-element {
   background-image: url("../images/hero-ribbons.png");
 }
+#test-relative {
+  background-image: url("~bootstrap/other.png");
+}
