@@ -2,5 +2,5 @@
   background-image: url("../images/hero-ribbons.png");
 }
 #test-relative {
-  background-image: url(LOCATE("bootstrap/other.png"));
+  background-image: url("locate://bootstrap/other.png");
 }

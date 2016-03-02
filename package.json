@@ -1,6 +1,6 @@
 {
 	"name":"steal-css",
-	"version":"0.2.0",
+	"version":"0.3.0",
 	"description":"css plugin for StealJS and SystemJS",
 	"main":"css.js",
 	"scripts":{
@@ -24,8 +24,8 @@
 	"devDependencies":{
 		"bower":"^1.4.1",
 		"grunt": "^0.4.5",
-		"steal":"^0.14.0-pre.3",
-		"testee": "^0.1.7",
+		"steal":"^0.15.0-pre.0",
+		"testee": "^0.2.5",
 		"systemjs":"bitovi/systemjs#b664e4cd359c013acb3445627d1e1e1799424542"
 	},
 	"system": {
