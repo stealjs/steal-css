@@ -1,7 +1,8 @@
 System.config({
 	paths: {
-		"bootstrap/*": "css_paths/folder/bootstrap/*",
-		"$css": "../css.js"
+		"bootstrap/*": "folder/bootstrap/*",
+		"$css": "../../css.js",
+		"helpers": "../helpers.js"
 	}
 });
 

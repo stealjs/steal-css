@@ -1,37 +1,40 @@
 {
-	"name":"steal-css",
-	"version":"0.4.1",
-	"description":"css plugin for StealJS and SystemJS",
-	"main":"css.js",
-	"scripts":{
-		"test": "grunt test"
-	},
-	"repository":{
-		"type":"git",
-		"url":"https://github.com/stealjs/steal-css.git"
-	},
-	"keywords":[
-		"StealJS",
-		"SystemJS",
-		"CSS"
-	],
-	"author":"Bitovi",
-	"license":"MIT",
-	"bugs":{
-		"url":"https://github.com/stealjs/steal-css/issues"
-	},
-	"homepage":"https://github.com/stealjs/steal-css",
-	"devDependencies":{
-		"bower":"^1.4.1",
-		"grunt": "^0.4.5",
-		"steal":"^0.15.0",
-		"testee": "^0.2.5",
-		"systemjs":"bitovi/systemjs#b664e4cd359c013acb3445627d1e1e1799424542"
-	},
-	"system": {
-	    "npmAlgorithm": "flat",
-	    "npmIgnore": [
-	      "testee", "grunt"
-	    ]
-	}
+  "name": "steal-css",
+  "version": "0.4.2",
+  "description": "css plugin for StealJS and SystemJS",
+  "main": "css.js",
+  "scripts": {
+    "build-1": "node test/css_paths/build.js",
+    "build-2": "node node_modules/.bin/steal-tools build --config test/css-before-js/config.js --main main --baseUrl test/css-before-js/",
+    "test": "npm run build-1 && npm run build-2 && grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stealjs/steal-css.git"
+  },
+  "keywords": [
+    "StealJS",
+    "SystemJS",
+    "CSS"
+  ],
+  "author": "Bitovi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/stealjs/steal-css/issues"
+  },
+  "homepage": "https://github.com/stealjs/steal-css",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "qunitjs": "~1.12.0",
+    "steal": "^1.0.0-beta",
+    "steal-tools": "^1.0.0-beta",
+    "systemjs": "bitovi/systemjs#b664e4cd359c013acb3445627d1e1e1799424542",
+    "testee": "^0.2.5"
+  },
+  "system": {
+    "npmIgnore": [
+      "testee",
+      "grunt"
+    ]
+  }
 }
