@@ -5,40 +5,85 @@ var isNode = typeof process === "object" && {}.toString.call(process) ===
 var importRegEx = /@import [^uU]['"]?([^'"\)]*)['"]?/g;
 var resourceRegEx =  /url\(['"]?([^'"\)]*)['"]?\)/g;
 	
-var waitSeconds = 100;
+var waitSeconds = (loader.cssOptions && loader.cssOptions.timeout)
+	? parseInt(loader.cssOptions.timeout, 10) : 60;
 var noop = function () {};
-var isWebkit = (typeof window !== 'undefined') ?
-	window.navigator.userAgent.match(/AppleWebKit\/([^ ;]*)/) : false;
-var webkitLoadCheck = function (link, callback) {
-		setTimeout(function () {
-			for (var i = 0; i < document.styleSheets.length; i++) {
-				var sheet = document.styleSheets[i];
-				if (sheet.href == link.href)
-					return callback();
-			}
-			webkitLoadCheck(link, callback);
-		}, 10);
-	};
+var onloadCss = function(link, cb){
+	var styleSheets = document.styleSheets;
+	var i = styleSheets.length;
+	while( i-- ){
+		if( styleSheets[ i ].href === link ){
+			return cb();
+		}
+	}
+	setTimeout(function() {
+		onloadCss(link, cb);
+	});
+};
+var isSafari5 = function() {
+	return !!navigator.userAgent.match(' Safari/') && !navigator.userAgent.match(' Chrom') && !!navigator.userAgent.match(' Version/5.');
+};
+var isOnloadNotSupport = function() {
+	var match,
+		ref = [535, 23],
+		supportedMajor = ref[0],
+		supportedMinor = ref[1];
+	if ((match = navigator.userAgent.match(/\ AppleWebKit\/(\d+)\.(\d+)/))) {
+		match.shift();
+		var ref1 = [+match[0], +match[1]],
+			major = ref1[0],
+			minor = ref1[1];
+		return major < supportedMajor || major === supportedMajor && minor < supportedMinor;
+	}
+};
+var attachEvents = function(link, cb){
+	if( link.addEventListener ){
+		link.addEventListener( "load", cb );
+		link.addEventListener( "error", cb );
+		// IE 8 and above
+	} else if( link.attachEvent ){
+		link.attachEvent( "onload", cb );
+		link.attachEvent( "onerror", cb );
+	} else {
+		link.onload = cb;
+		link.onerror = cb;
+	}
+};
+var detachEvents = function(link, cb){
+	if( link.removeEventListener ){
+		link.removeEventListener("load", cb);
+		link.removeEventListener("error", cb);
+
+		// IE 8 and above
+	} else if( link.detachEvent ){
+		link.detachEvent("onload", cb);
+		link.detachEvent("onerror", cb);
+	} else {
+		link.onload = noop;
+		link.onerror = noop;
+	}
+};
 
 if(isProduction()) {
 	exports.fetch = function(load) {
-		// stolen from https://github.com/systemjs/plugin-css/edit/master/css.js
-		// thanks!
+		// inspired by https://github.com/filamentgroup/loadCSS
+		// and http://stackoverflow.com/questions/3078584/link-element-onload
+
 		// wait until the css file is loaded
 		return new Promise(function(resolve, reject) {
 			var timeout = setTimeout(function() {
 				reject('Unable to load CSS');
 			}, waitSeconds * 1000);
 
-			var _callback = function(error) {
+			var loadCB = function(event) {
 				clearTimeout(timeout);
-				link.onload = link.onerror = noop;
-				setTimeout(function() {
-					if (error)
-						reject(error);
-					else
-						resolve('');
-				}, 7);
+				detachEvents(link, loadCB);
+
+				if(event && event.type === "error"){
+					reject('Unable to load CSS');
+				} else {
+					resolve('');
+				}
 			};
 
 			var link = document.createElement('link');
@@ -46,16 +91,16 @@ if(isProduction()) {
 			link.rel = 'stylesheet';
 			link.href = load.address;
 
-			if (!isWebkit) {
-				link.onload = function() {
-					_callback();
-				}
+			// Browser they not support onload event
+			// - Old Safari Browsers
+			// - Old Android Browsers
+			// - Browser they don't have onload inside
+			if(true || isSafari5() || isOnloadNotSupport() ||
+				"isApplicationInstalled" in navigator || !("onload" in link)) {
+				onloadCss(link.href, loadCB);
 			} else {
-				webkitLoadCheck(link, _callback);
+				attachEvents(link, loadCB);
 			}
-			link.onerror = function(event) {
-				_callback(event.error || new Error('Error loading CSS file.'));
-			};
 
 			document.head.appendChild(link);
 
