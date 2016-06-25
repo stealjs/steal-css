@@ -18,7 +18,7 @@ var onloadCss = function(link, cb){
 	}
 	setTimeout(function() {
 		onloadCss(link, cb);
-	});
+	}, 10);
 };
 var isSafari5 = function() {
 	return !!navigator.userAgent.match(' Safari/') && !navigator.userAgent.match(' Chrom') && !!navigator.userAgent.match(' Version/5.');
@@ -95,7 +95,7 @@ if(isProduction()) {
 			// - Old Safari Browsers
 			// - Old Android Browsers
 			// - Browser they don't have onload inside
-			if(true || isSafari5() || isOnloadNotSupport() ||
+			if(isSafari5() || isOnloadNotSupport() ||
 				"isApplicationInstalled" in navigator || !("onload" in link)) {
 				onloadCss(link.href, loadCB);
 			} else {
