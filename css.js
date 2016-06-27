@@ -8,17 +8,23 @@ var resourceRegEx =  /url\(['"]?([^'"\)]*)['"]?\)/g;
 var waitSeconds = (loader.cssOptions && loader.cssOptions.timeout)
 	? parseInt(loader.cssOptions.timeout, 10) : 60;
 var noop = function () {};
+var polling;
 var onloadCss = function(link, cb){
-	var styleSheets = document.styleSheets;
-	var i = styleSheets.length;
-	while( i-- ){
-		if( styleSheets[ i ].href === link ){
-			return cb();
+	polling = setTimeout(function() {
+		var styleSheets = document.styleSheets;
+		for (var i = 0; i < styleSheets.length; i++) {
+			if (styleSheets[i].href == link.href) {
+				detachEvents(link, cb);
+				return cb();
+			}
 		}
-	}
-	setTimeout(function() {
 		onloadCss(link, cb);
-	}, 10);
+		// sometimes polling is faster then the onload event
+		// if polling is faster, then tests fail in firefox!
+		// we have to increase the timeout.
+		// 70 seems to be a good way.
+		// if someone gets problems we can ajust this timeout
+	}, 70);
 };
 var attachEvents = function(link, cb){
 	if( link.addEventListener ){
@@ -66,6 +72,7 @@ if(isProduction()) {
 
 			var loadCB = function(event) {
 				clearTimeout(timeout);
+				clearTimeout(polling);
 				detachEvents(link, loadCB);
 
 				if(event && event.type === "error"){
@@ -79,7 +86,7 @@ if(isProduction()) {
 			// css file is loaded
 			attachEvents(link, loadCB);
 			// fallback, polling styleSheets
-			onloadCss(link.href, loadCB);
+			onloadCss(link, loadCB);
 
 			document.head.appendChild(link);
 
