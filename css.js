@@ -23,7 +23,7 @@ var onloadCss = function(link, cb){
 		// if polling is faster, then tests fail in firefox!
 		// we have to increase the timeout.
 		// 70 seems to be a good way.
-		// if someone gets problems we can ajust this timeout
+		// if someone gets problems we can adjust this timeout
 	}, 70);
 };
 var attachEvents = function(link, cb){
