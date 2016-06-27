@@ -20,22 +20,6 @@ var onloadCss = function(link, cb){
 		onloadCss(link, cb);
 	}, 10);
 };
-var isSafari5 = function() {
-	return !!navigator.userAgent.match(' Safari/') && !navigator.userAgent.match(' Chrom') && !!navigator.userAgent.match(' Version/5.');
-};
-var isOnloadNotSupport = function() {
-	var match,
-		ref = [535, 23],
-		supportedMajor = ref[0],
-		supportedMinor = ref[1];
-	if ((match = navigator.userAgent.match(/\ AppleWebKit\/(\d+)\.(\d+)/))) {
-		match.shift();
-		var ref1 = [+match[0], +match[1]],
-			major = ref1[0],
-			minor = ref1[1];
-		return major < supportedMajor || major === supportedMajor && minor < supportedMinor;
-	}
-};
 var attachEvents = function(link, cb){
 	if( link.addEventListener ){
 		link.addEventListener( "load", cb );
@@ -75,6 +59,11 @@ if(isProduction()) {
 				reject('Unable to load CSS');
 			}, waitSeconds * 1000);
 
+			var link = document.createElement('link');
+			link.type = 'text/css';
+			link.rel = 'stylesheet';
+			link.href = load.address;
+
 			var loadCB = function(event) {
 				clearTimeout(timeout);
 				detachEvents(link, loadCB);
@@ -85,22 +74,12 @@ if(isProduction()) {
 					resolve('');
 				}
 			};
-
-			var link = document.createElement('link');
-			link.type = 'text/css';
-			link.rel = 'stylesheet';
-			link.href = load.address;
-
-			// Browser they not support onload event
-			// - Old Safari Browsers
-			// - Old Android Browsers
-			// - Browser they don't have onload inside
-			if(isSafari5() || isOnloadNotSupport() ||
-				"isApplicationInstalled" in navigator || !("onload" in link)) {
-				onloadCss(link.href, loadCB);
-			} else {
-				attachEvents(link, loadCB);
-			}
+			// attach onload event for all browser
+			// wherever onload event is fired if
+			// css file is loaded
+			attachEvents(link, loadCB);
+			// fallback, polling styleSheets
+			onloadCss(link.href, loadCB);
 
 			document.head.appendChild(link);
 
