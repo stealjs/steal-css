@@ -8,24 +8,6 @@ var resourceRegEx =  /url\(['"]?([^'"\)]*)['"]?\)/g;
 var waitSeconds = (loader.cssOptions && loader.cssOptions.timeout)
 	? parseInt(loader.cssOptions.timeout, 10) : 60;
 var noop = function () {};
-var polling;
-var onloadCss = function(link, cb){
-	polling = setTimeout(function() {
-		var styleSheets = document.styleSheets;
-		for (var i = 0; i < styleSheets.length; i++) {
-			if (styleSheets[i].href == link.href) {
-				detachEvents(link, cb);
-				return cb();
-			}
-		}
-		onloadCss(link, cb);
-		// sometimes polling is faster then the onload event
-		// if polling is faster, then tests fail in firefox!
-		// we have to increase the timeout.
-		// 100 seems to be a good way.
-		// if someone gets problems we can adjust this timeout
-	}, 100);
-};
 var attachEvents = function(link, cb){
 	if( link.addEventListener ){
 		link.addEventListener( "load", cb );
@@ -58,6 +40,25 @@ if(isProduction()) {
 	exports.fetch = function(load) {
 		// inspired by https://github.com/filamentgroup/loadCSS
 		// and http://stackoverflow.com/questions/3078584/link-element-onload
+
+		var polling;
+		var onloadCss = function(link, cb){
+			polling = setTimeout(function() {
+				var styleSheets = document.styleSheets;
+				for (var i = 0; i < styleSheets.length; i++) {
+					if (styleSheets[i].href == link.href) {
+						detachEvents(link, cb);
+						return cb();
+					}
+				}
+				onloadCss(link, cb);
+				// sometimes polling is faster then the onload event
+				// if polling is faster, then tests fail in firefox!
+				// we have to increase the timeout.
+				// 100 seems to be a good way.
+				// if someone gets problems we can adjust this timeout
+			}, 100);
+		};
 
 		// wait until the css file is loaded
 		return new Promise(function(resolve, reject) {
