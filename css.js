@@ -8,57 +8,23 @@ var resourceRegEx =  /url\(['"]?([^'"\)]*)['"]?\)/g;
 var waitSeconds = (loader.cssOptions && loader.cssOptions.timeout)
 	? parseInt(loader.cssOptions.timeout, 10) : 60;
 var noop = function () {};
-var attachEvents = function(link, cb){
-	if( link.addEventListener ){
-		link.addEventListener( "load", cb );
-		link.addEventListener( "error", cb );
-		// IE 8 and above
-	} else if( link.attachEvent ){
-		link.attachEvent( "onload", cb );
-		link.attachEvent( "onerror", cb );
-	} else {
-		link.onload = cb;
-		link.onerror = cb;
+var onloadCss = function(link, cb){
+	var styleSheets = document.styleSheets,
+		i = styleSheets.length;
+	while( i-- ){
+		if( styleSheets[ i ].href === link.href ){
+			return cb();
+		}
 	}
+	setTimeout(function() {
+		onloadCss(link, cb);
+	});
 };
-var detachEvents = function(link, cb){
-	if( link.removeEventListener ){
-		link.removeEventListener("load", cb);
-		link.removeEventListener("error", cb);
 
-		// IE 8 and above
-	} else if( link.detachEvent ){
-		link.detachEvent("onload", cb);
-		link.detachEvent("onerror", cb);
-	} else {
-		link.onload = noop;
-		link.onerror = noop;
-	}
-};
 
 if(isProduction()) {
 	exports.fetch = function(load) {
 		// inspired by https://github.com/filamentgroup/loadCSS
-		// and http://stackoverflow.com/questions/3078584/link-element-onload
-
-		var polling;
-		var onloadCss = function(link, cb){
-			polling = setTimeout(function() {
-				var styleSheets = document.styleSheets;
-				for (var i = 0; i < styleSheets.length; i++) {
-					if (styleSheets[i].href == link.href) {
-						detachEvents(link, cb);
-						return cb();
-					}
-				}
-				onloadCss(link, cb);
-				// sometimes polling is faster then the onload event
-				// if polling is faster, then tests fail in firefox!
-				// we have to increase the timeout.
-				// 100 seems to be a good way.
-				// if someone gets problems we can adjust this timeout
-			}, 100);
-		};
 
 		// wait until the css file is loaded
 		return new Promise(function(resolve, reject) {
@@ -73,8 +39,8 @@ if(isProduction()) {
 
 			var loadCB = function(event) {
 				clearTimeout(timeout);
-				clearTimeout(polling);
-				detachEvents(link, loadCB);
+				link.removeEventListener("load", loadCB);
+				link.removeEventListener("error", loadCB);
 
 				if(event && event.type === "error"){
 					reject('Unable to load CSS');
@@ -82,12 +48,22 @@ if(isProduction()) {
 					resolve('');
 				}
 			};
-			// attach onload event for all browser
-			// wherever onload event is fired if
-			// css file is loaded
-			attachEvents(link, loadCB);
-			// fallback, polling styleSheets
-			onloadCss(link, loadCB);
+
+			// This code is for browsers that don’t support onload
+			// No support for onload (it'll bind but never fire):
+			//	* Android 4.3 (Samsung Galaxy S4, Browserstack)
+			//	* Android 4.2 Browser (Samsung Galaxy SIII Mini GT-I8200L)
+			//	* Android 2.3 (Pantech Burst P9070)
+			// Weak inference targets Android < 4.4 and
+			// a fallback for IE 8 and beneath
+			if( "isApplicationInstalled" in navigator || !link.addEventListener) {
+				// fallback, polling styleSheets
+				onloadCss(link, loadCB);
+			} else {
+				// attach onload event for all modern browser
+				link.addEventListener( "load", loadCB );
+				link.addEventListener( "error", loadCB );
+			}
 
 			document.head.appendChild(link);
 
