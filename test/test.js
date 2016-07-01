@@ -10,8 +10,16 @@ var makeIframe = function(src){
 	iframe.src = src;
 };
 
-asyncTest("url paths in css work", function(){
-	makeIframe("css_paths/site.html");
+asyncTest("wait for css until it is loaded", function(){
+	makeIframe("css-before-js/prod.html");
+});
+
+asyncTest("url paths in css works", function(){
+	makeIframe("css_paths/dev.html");
+});
+
+asyncTest("url paths in production works", function(){
+	makeIframe("css_paths/prod.html");
 });
 
 QUnit.start();
