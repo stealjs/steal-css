@@ -1,6 +1,6 @@
 {
   "name": "steal-css",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "description": "css plugin for StealJS and SystemJS",
   "main": "css.js",
   "scripts": {
