@@ -22,4 +22,8 @@ asyncTest("url paths in production works", function(){
 	makeIframe("css_paths/prod.html");
 });
 
+asyncTest("css instantiated hack", function(){
+	makeIframe("css-instantiated/prod.html");
+});
+
 QUnit.start();
