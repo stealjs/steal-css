@@ -9,7 +9,6 @@ var waitSeconds = (loader.cssOptions && loader.cssOptions.timeout)
 	? parseInt(loader.cssOptions.timeout, 10) : 60;
 var noop = function () {};
 var onloadCss = function(link, cb){
-	debugger;
 	var styleSheets = document.styleSheets,
 		i = styleSheets.length;
 	while( i-- ){
