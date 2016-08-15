@@ -27,8 +27,8 @@
   "devDependencies": {
     "grunt": "^0.4.5",
     "qunitjs": "~1.12.0",
-    "steal": "1.0.0-beta.3",
-    "steal-tools": "1.0.0-beta.3",
+    "steal": "^1.0.0-rc",
+    "steal-tools": "^1.0.0-rc",
     "systemjs": "bitovi/systemjs#b664e4cd359c013acb3445627d1e1e1799424542",
     "testee": "^0.2.5"
   },
