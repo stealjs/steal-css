@@ -77,6 +77,11 @@ if(isProduction()) {
 
 			document.head.appendChild(link);
 
+			// if after appending link styleSheet and the length is still 0 we call always loadCB()
+			// this is a bad workaround for the Zombie.js browser
+			if(document.styleSheets.length === 0) {
+				loadCB();
+			}
 		});
 	};
 
