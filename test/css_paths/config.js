@@ -1,7 +1,12 @@
-System.config({
+var steal = require("@steal");
+
+steal.config({
+	ext: {
+		css: "steal-css"
+	},
 	paths: {
 		"bootstrap/*": "folder/bootstrap/*",
-		"$css": "../../css.js",
+		"steal-css": "../../css.js",
 		"helpers": "../helpers.js"
 	}
 });

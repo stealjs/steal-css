@@ -1,15 +1,16 @@
 var loader = require("@loader");
+var steal = require("@steal");
 
 var isNode = typeof process === "object" && {}.toString.call(process) ===
 	"[object process]";
 var importRegEx = /@import [^uU]['"]?([^'"\)]*)['"]?/g;
 var resourceRegEx =  /url\(['"]?([^'"\)]*)['"]?\)/g;
-	
+
 var waitSeconds = (loader.cssOptions && loader.cssOptions.timeout)
 	? parseInt(loader.cssOptions.timeout, 10) : 60;
 var noop = function () {};
 var onloadCss = function(link, cb){
-	var styleSheets = document.styleSheets,
+	var styleSheets = getDocument().styleSheets,
 		i = styleSheets.length;
 	while( i-- ){
 		if( styleSheets[ i ].href === link.href ){
@@ -21,31 +22,59 @@ var onloadCss = function(link, cb){
 	});
 };
 
-if(isProduction()) {
-	exports.fetch = function(load) {
-		// inspired by https://github.com/filamentgroup/loadCSS
+function getDocument() {
+	if(typeof doneSsr !== "undefined" && doneSsr.globalDocument) {
+		return doneSsr.globalDocument;
+	}
 
-		var styleSheets = document.styleSheets;
+	return typeof document === "undefined" ? undefined : document;
+}
+
+function getHead() {
+	var doc = getDocument();
+	var head = doc.head || doc.getElementsByTagName("head")[0];
+
+	if(!head) {
+		var docEl = doc.documentElement || doc;
+		head = doc.createElement("head");
+		docEl.insertBefore(head, docEl.firstChild);
+	}
+	return head;
+}
+
+/**
+ *
+ */
+function CSSModule(address, source) {
+	this.address = address;
+	this.source = source;
+}
+
+CSSModule.prototype = {
+	injectLink: function(){
+		if(this._loaded) {
+			return this._loaded;
+		}
+
+		if(this.linkExists()) {
+			this._loaded = Promise.resolve('');
+			return this._loaded;
+		}
+
+		// inspired by https://github.com/filamentgroup/loadCSS
+		var doc = getDocument();
+		var styleSheets = doc.styleSheets;
+		var address = this.address;
+		var link = this.link = doc.createElement("link");
+		link.type = "text/css";
+		link.rel = "stylesheet";
+		link.href = this.address;
 
 		// wait until the css file is loaded
-		return new Promise(function(resolve, reject) {
+		this._loaded = new Promise(function(resolve, reject) {
 			var timeout = setTimeout(function() {
 				reject('Unable to load CSS');
 			}, waitSeconds * 1000);
-
-			// if found a stylesheet with the same address
-			// resolve this promise without adding a link element to the page.
-			for (var i = 0; i < styleSheets.length; ++i) {
-				if(load.address === styleSheets[i].href){
-					resolve('');
-					return;
-				}
-			}
-
-			var link = document.createElement('link');
-			link.type = 'text/css';
-			link.rel = 'stylesheet';
-			link.href = load.address;
 
 			var loadCB = function(event) {
 				clearTimeout(timeout);
@@ -66,7 +95,8 @@ if(isProduction()) {
 			//	* Android 2.3 (Pantech Burst P9070)
 			// Weak inference targets Android < 4.4 and
 			// a fallback for IE 8 and beneath
-			if( "isApplicationInstalled" in navigator || !link.addEventListener) {
+			if( "isApplicationInstalled" in navigator ||
+			   !link.addEventListener) {
 				// fallback, polling styleSheets
 				onloadCss(link, loadCB);
 			} else {
@@ -75,87 +105,119 @@ if(isProduction()) {
 				link.addEventListener( "error", loadCB );
 			}
 
-			document.head.appendChild(link);
-
-			// if after appending link styleSheet and the length is still 0 we call always loadCB()
-			// this is a bad workaround for the Zombie.js browser
-			if(document.styleSheets.length === 0) {
-				loadCB();
-			}
+			getHead().appendChild(link);
 		});
-	};
 
-} else {
+		return this._loaded;
+	},
 
-	exports.instantiate = function(load) {
-		var loader = this;
 
-		// Replace @import's that don't start with a "u" or "U" and do start
-		// with a single or double quote with a path wrapped in "url()"
-		// relative to the page
-		load.source = load.source.replace(importRegEx, function(whole, part) {
+	injectStyle: function(){
+		var doc = getDocument();
+		var head = getHead();
+		var style = this.style = doc.createElement('style');
+
+		// make source load relative to the current page
+		style.type = 'text/css';
+
+		if (style.styleSheet){
+			style.styleSheet.cssText = this.source;
+		} else {
+			style.appendChild(doc.createTextNode(this.source));
+		}
+		head.appendChild(style);
+	},
+
+	// Replace @import's that don't start with a "u" or "U" and do start
+	// with a single or double quote with a path wrapped in "url()"
+	// relative to the page
+	updateURLs: function(){
+		var rawSource = this.source,
+			address = this.address;
+
+		this.source = rawSource.replace(importRegEx, function(whole, part){
 			if(isNode) {
 				return "@import url(" + part + ")";
 			}else{
-				return "@import url(" + steal.joinURIs( load.address, part) + ")";
+				return "@import url(" + steal.joinURIs(address, part) + ")";
 			}
 		});
 
-
-		load.metadata.deps = [];
-		load.metadata.execute = function(){
-
-			var source = load.source+"/*# sourceURL="+load.address+" */";
-			source = source.replace(resourceRegEx, function(whole, part) {
-				return "url(" + steal.joinURIs( load.address, part) + ")";
+		if(!isNode) {
+			this.source = this.source + "/*# sourceURL=" + address + " */";
+			this.source = this.source.replace(resourceRegEx, function(whole, part){
+				return "url(" + steal.joinURIs(address, part) + ")";
 			});
 
-			if(load.source && typeof document !== "undefined") {
-				var doc = document.head ? document : document.getElementsByTagName ?
-					document : document.documentElement;
+		}
+		return this.source;
+	},
 
-				var head = doc.head || doc.getElementsByTagName('head')[0],
-					style = document.createElement('style');
+	getExistingNode: function(){
+		var doc = getDocument();
+		var selector = "[href='" + this.address + "']";
+		return doc.querySelector && doc.querySelector(selector);
+	},
 
-				if(!head) {
-					var docEl = doc.documentElement || doc;
-					head = document.createElement("head");
-					docEl.insertBefore(head, docEl.firstChild);
-				}
+	linkExists: function(){
+		var styleSheets = getDocument().styleSheets;
+		for (var i = 0; i < styleSheets.length; ++i) {
+			if(this.address === styleSheets[i].href){
+				return true;
+			}
+		}
+		return false;
+	},
 
-				// make source load relative to the current page
-				style.type = 'text/css';
+	setupLiveReload: function(loader, name){
+		var head = getHead();
 
-				if (style.styleSheet){
-					style.styleSheet.cssText = source;
-				} else {
-					style.appendChild(document.createTextNode(source));
-				}
-				head.appendChild(style);
+		if(loader.liveReloadInstalled) {
+			var cssReload = loader["import"]("live-reload", {
+				name: module.id
+			});
 
-				if(loader.has("live-reload")) {
-					var cssReload = loader["import"]("live-reload", { name: "$css" });
-					Promise.resolve(cssReload).then(function(reload){
-						loader["import"](load.name).then(function(){
-							reload.once(load.name, function(){
-								head.removeChild(style);
-							});
-						});
+			Promise.resolve(cssReload).then(function(reload){
+				loader["import"](name).then(function(){
+					reload.once(name, function(){
+						head.removeChild(css.style);
 					});
-				}
+				});
+			});
+		}
+	}
+};
+
+
+if(loader.isEnv("production")) {
+	exports.fetch = function(load) {
+		var css = new CSSModule(load.address);
+		return css.injectLink();
+	};
+} else {
+	exports.instantiate = function(load) {
+		var loader = this;
+
+		var css = new CSSModule(load.address, load.source);
+		load.source = css.updateURLs();
+
+		load.metadata.deps = [];
+		load.metadata.format = "css";
+		load.metadata.execute = function(){
+			if(getDocument()) {
+				css.injectStyle();
+				css.setupLiveReload(loader, load.name);
 			}
 
-			return System.newModule({source: source});
+			return loader.newModule({
+				source: css.source
+			});
 		};
-		load.metadata.format = "css";
 	};
 
 }
 
-function isProduction(){
-	return (loader.isEnv && loader.isEnv("production")) ||
-		loader.env === "production";
-}
+exports.CSSModule = CSSModule;
 exports.locateScheme = true;
 exports.buildType = "css";
 exports.includeInBuild = true;
