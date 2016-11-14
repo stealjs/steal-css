@@ -1,13 +1,15 @@
 {
   "name": "steal-css",
-  "version": "0.5.1",
-  "description": "css plugin for StealJS and SystemJS",
+  "version": "1.0.0-rc.0",
+  "description": "CSS plugin for StealJS",
   "main": "css.js",
   "scripts": {
     "build-1": "node test/css_paths/build.js",
     "build-2": "node node_modules/.bin/steal-tools build --config test/css-before-js/stealconfig.js --main main --baseUrl test/css-before-js/ --minify false",
     "build-3": "node test/css-instantiated/build.js",
-    "test": "npm run build-1 && npm run build-2 && npm run build-3 && grunt test"
+    "test": "npm run build-1 && npm run build-2 && npm run build-3 && npm run run-tests",
+    "run-tests": "testee test/test.html --browsers firefox --reporter Spec",
+    "document": "bit-docs"
   },
   "repository": {
     "type": "git",
@@ -15,7 +17,6 @@
   },
   "keywords": [
     "StealJS",
-    "SystemJS",
     "CSS"
   ],
   "author": "Bitovi",
@@ -25,18 +26,33 @@
   },
   "homepage": "https://github.com/stealjs/steal-css",
   "devDependencies": {
-    "grunt": "^0.4.5",
+    "bit-docs": "0.0.6",
     "qunitjs": "~1.12.0",
     "steal": "^1.0.0-rc",
-    "steal-tools": "^1.0.0-rc",
-    "systemjs": "bitovi/systemjs#b664e4cd359c013acb3445627d1e1e1799424542",
+    "steal-tools": "^1.0.0-rc.6",
     "testee": "^0.2.5"
   },
-  "system": {
-    "npmAlgorithm": "flat",
-    "npmIgnore": [
-      "testee",
-      "grunt"
-    ]
+  "steal": {
+    "ext": {
+      "css": "steal-css"
+    },
+    "npmIgnore": ["testee"]
+  },
+  "bit-docs": {
+    "dependencies": {
+      "bit-docs-glob-finder": "^0.0.5",
+      "bit-docs-dev": "^0.0.3",
+      "bit-docs-js": "^0.0.3",
+      "bit-docs-generate-readme": "^0.0.8"
+    },
+    "glob": {
+      "pattern": "**/*.{js,md}",
+      "ignore": "node_modules/**/*"
+    },
+    "readme": {
+      "apis": "./docs/apis.json"
+    },
+    "parent": "steal-css"
   }
+
 }

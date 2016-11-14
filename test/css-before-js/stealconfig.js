@@ -1,6 +1,9 @@
 steal.config({
+	ext: {
+		"css": "steal-css"
+	},
 	paths: {
-		"$css": "../../css.js"
+		"steal-css": "../../css.js"
 	},
 	cssOptions: {
 		timeout: '15'

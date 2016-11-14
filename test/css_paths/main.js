@@ -1,5 +1,6 @@
 import "./folder/main.css";
 import helpers from 'helpers';
+import steal from "@steal";
 
 var testImage = function(selector, cb){
 	var image = new Image();
@@ -16,7 +17,7 @@ var testImage = function(selector, cb){
 };
 
 
-if(steal.System.isEnv('production')) {
+if(steal.isEnv('production')) {
 	if (typeof window !== "undefined" && window.QUnit) {
 
 		var btn = $('.btn.btn-danger');
@@ -47,7 +48,7 @@ if(steal.System.isEnv('production')) {
 	}
 
 	// develop
-}else{
+} else {
 	// Wait for the @import's to resolve in the <style>
 	// tag added by the main.css! import
 	helpers.waitForCssRules($('style')[0], function () {
