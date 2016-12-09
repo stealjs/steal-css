@@ -30,16 +30,17 @@
   "homepage": "https://github.com/stealjs/steal-css",
   "devDependencies": {
     "async": "^2.3.0",
-    "bit-docs": "0.0.6",
+    "bit-docs": "0.0.7",
     "eslint": "^3.19.0",
     "http-server": "^0.9.0",
-    "qunitjs": "~1.12.0",
+    "qunitjs": "~2.1.0",
     "saucelabs": "^1.4.0",
     "steal": "^1.0.0",
     "steal-qunit": "^1.0.0",
     "steal-test-helpers": "^0.2.0",
     "steal-tools": "^1.0.0",
     "testee": "^0.2.5",
+    "testee": "^0.3.0",
     "wd": "^1.2.0"
   },
   "steal": {
