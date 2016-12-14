@@ -19,7 +19,19 @@ Install steal-css with npm and save it as a development dependency:
 > npm install steal-css --save-dev
 ```
 
-steal-css will automatically configure itself to be the default plugin for loading CSS. To load a CSS module in your JavaScript code, just import it just as you would any other module:
+In your package.json add steal-css as a plugin under your **steal** (or **system**) configuration:
+
+```json
+...
+
+"steal": {
+  "plugins": [
+    "steal-css"
+  ]
+}
+```
+
+To load a CSS module in your JavaScript code, just import it just as you would any other module:
 
 ```js
 import "./styles.css";
