@@ -45,9 +45,16 @@ function getHead() {
 /**
  *
  */
-function CSSModule(address, source) {
-	this.address = address;
-	this.source = source;
+function CSSModule(load, loader) {
+	if(typeof load === "object") {
+		this.load = load;
+		this.loader = loader;
+		this.address = this.load.address;
+		this.source = this.load.source;
+	} else {
+		this.address = load; // this is a string
+		this.source = loader; // this is a string
+	}
 }
 
 CSSModule.prototype = {
@@ -171,6 +178,7 @@ CSSModule.prototype = {
 
 	setupLiveReload: function(loader, name){
 		var head = getHead();
+		var css = this;
 
 		if(loader.liveReloadInstalled) {
 			var cssReload = loader["import"]("live-reload", {
@@ -179,8 +187,11 @@ CSSModule.prototype = {
 
 			Promise.resolve(cssReload).then(function(reload){
 				loader["import"](name).then(function(){
-					reload.once(name, function(){
-						head.removeChild(css.style);
+					reload.once("!dispose/" + load.name, function(){
+						css.style.__isDirty = true;
+						reload.once("!cycleComplete", function(){
+							head.removeChild(css.style);
+						});
 					});
 				});
 			});
@@ -218,6 +229,8 @@ if(loader.isEnv("production")) {
 }
 
 exports.CSSModule = CSSModule;
+exports.getDocument = getDocument;
+exports.getHead = getHead;
 exports.locateScheme = true;
 exports.buildType = "css";
 exports.includeInBuild = true;

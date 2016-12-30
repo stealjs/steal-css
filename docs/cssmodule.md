@@ -6,6 +6,14 @@
 
 `CSSModule` is a constructor function that is used for loading a `.css` module. This is mostly useful for CSS plugins that seek to inherit base behavior from [steal-css].
 
+@signature `new CSSModule(load, loader)`
+
+Creates a new instance of CSSModule for the load.
+
+@param {Object} load The load object of this module.
+
+@param {Loader} loader The loader loading the module.
+
 @signature `new CSSModule(address, source)`
 
 Creates a new instance of CSSModule with the given address and source.
@@ -25,7 +33,7 @@ var CSSModule = require("steal-css").CSSModule;
 
 ...
 
-var css = new CSSModule(address, source);
+var css = new CSSModule(load, loader);
 ```
 
 Depending on whether you are trying to inject a `<style>` tag or a `<link>` tag use the methods [steal-css.CSSModule.prototype.injectStyle] or [steal-css.CSSModule.prototype.injectLink].
