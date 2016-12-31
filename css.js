@@ -187,7 +187,7 @@ CSSModule.prototype = {
 
 			Promise.resolve(cssReload).then(function(reload){
 				loader["import"](name).then(function(){
-					reload.once("!dispose/" + load.name, function(){
+					reload.once("!dispose/" + name, function(){
 						css.style.__isDirty = true;
 						reload.once("!cycleComplete", function(){
 							head.removeChild(css.style);
