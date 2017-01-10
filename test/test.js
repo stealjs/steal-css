@@ -26,4 +26,8 @@ asyncTest("css instantiated hack", function(){
 	makeIframe("css-instantiated/prod.html");
 });
 
+asyncTest("steal-css is mapped as $css", function(){
+	makeIframe("dollar-css/dev.html");
+});
+
 QUnit.start();

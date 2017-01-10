@@ -28,15 +28,17 @@
   "devDependencies": {
     "bit-docs": "0.0.6",
     "qunitjs": "~1.12.0",
-    "steal": "^1.0.0-rc",
-    "steal-tools": "^1.0.0-rc.6",
+    "steal": "^1.0.0",
+    "steal-tools": "^1.0.0",
     "testee": "^0.2.5"
   },
   "steal": {
     "ext": {
       "css": "steal-css"
     },
-    "npmIgnore": ["testee"]
+    "map": {
+      "$css": "steal-css"
+    }
   },
   "bit-docs": {
     "dependencies": {
