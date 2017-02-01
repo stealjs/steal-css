@@ -27,7 +27,11 @@ function getDocument() {
 		return doneSsr.globalDocument;
 	}
 
-	return typeof document === "undefined" ? undefined : document;
+	if(typeof document !== "undefined") {
+		return document;
+	}
+
+	throw new Error("Unable to load CSS in an environment without a document.");
 }
 
 function getHead() {

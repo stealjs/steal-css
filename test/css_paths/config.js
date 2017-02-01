@@ -7,8 +7,6 @@ steal.config({
 	paths: {
 		"bootstrap/*": "folder/bootstrap/*",
 		"steal-css": "../../css.js",
-		"helpers": "../helpers.js"
+		"helpers": "./helpers.js"
 	}
 });
-
-
