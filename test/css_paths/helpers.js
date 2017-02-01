@@ -1,13 +1,3 @@
-var steal = require("@steal");
-var helpers = require("steal-test-helpers")(steal);
-var pkg = require("../package.json");
-
-exports.clone = function(){
-	var sName = "steal-css@" + pkg.version + "#css";
-	var sSource = steal.loader.getModuleLoad(sName).source;
-
-	return helpers.clone().withModule("steal-css", sSource);
-};
 
 exports.waitForCssRules = function(styleNode, callback) {
 	if (typeof callback !== 'function') {

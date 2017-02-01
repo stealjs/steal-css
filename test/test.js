@@ -1,3 +1,5 @@
+var QUnit = require("steal-qunit");
+
 QUnit.module("steal-css plugin");
 
 var makeIframe = function(src){
@@ -30,4 +32,4 @@ asyncTest("steal-css is mapped as $css", function(){
 	makeIframe("dollar-css/dev.html");
 });
 
-QUnit.start();
+require("./unit");

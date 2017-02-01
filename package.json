@@ -29,6 +29,8 @@
     "bit-docs": "0.0.6",
     "qunitjs": "~1.12.0",
     "steal": "^1.0.0",
+    "steal-qunit": "^1.0.0",
+    "steal-test-helpers": "^0.2.0",
     "steal-tools": "^1.0.0",
     "testee": "^0.2.5"
   },
@@ -56,5 +58,4 @@
     },
     "parent": "steal-css"
   }
-
 }
