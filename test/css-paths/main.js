@@ -9,8 +9,8 @@ var testImage = function(selector, cb){
 	};
 	image.onerror = function(){
 		cb(selector);
-		QUnit.ok(false, "image not loaded");
-		QUnit.start();
+		assert.ok(false, "image not loaded");
+		assert.start();
 		removeMyself();
 	};
 	image.src = $(selector).css("background-image").replace(/url\("?/,"").replace(/"?\)/,"");
@@ -18,27 +18,25 @@ var testImage = function(selector, cb){
 
 
 if(steal.isEnv('production')) {
-	if (typeof window !== "undefined" && window.QUnit) {
+	if (typeof window !== "undefined" && window.assert) {
 
 		var btn = $('.btn.btn-danger');
-		QUnit.equal(btn.css('display'), 'inline-block', '@import "locate://"; styles applied');
-		QUnit.equal(btn.css('backgroundColor'), 'rgb(255, 0, 0)', '@import url("locate://"); styles applied');
+		assert.equal(btn.css('display'), 'inline-block', '@import "locate://"; styles applied');
+		assert.equal(btn.css('backgroundColor'), 'rgb(255, 0, 0)', '@import url("locate://"); styles applied');
 
 		testImage("#test-element", function(err){
 			if(err){
-				QUnit.ok(false, err);
-				QUnit.start();
-				removeMyself();
+				assert.ok(false, err);
+				done();
 			} else {
-				QUnit.ok(true, "background-image: url(../); styles applied");
+				assert.ok(true, "background-image: url(../); styles applied");
 				testImage("#test-relative", function(err){
 					if(err){
-						QUnit.ok(false, err);
+						assert.ok(false, err);
 					} else {
-						QUnit.ok(true, "background-image: url(locate://); styles applied");
+						assert.ok(true, "background-image: url(locate://); styles applied");
 					}
-					QUnit.start();
-					removeMyself();
+					done();
 				});
 			}
 		});
@@ -53,27 +51,25 @@ if(steal.isEnv('production')) {
 	// tag added by the main.css! import
 	helpers.waitForCssRules($('style')[0], function () {
 
-		if (typeof window !== "undefined" && window.QUnit) {
+		if (typeof window !== "undefined" && window.assert) {
 
 			var btn = $('.btn.btn-danger');
-			QUnit.equal(btn.css('display'), 'inline-block', '@import "locate://"; styles applied');
-			QUnit.equal(btn.css('backgroundColor'), 'rgb(255, 0, 0)', '@import url("locate://"); styles applied');
+			assert.equal(btn.css('display'), 'inline-block', '@import "locate://"; styles applied');
+			assert.equal(btn.css('backgroundColor'), 'rgb(255, 0, 0)', '@import url("locate://"); styles applied');
 
 			testImage("#test-element", function(err){
 				if(err){
-					QUnit.ok(false, err);
-					QUnit.start();
-					removeMyself();
+					assert.ok(false, err);
+					done();
 				} else {
-					QUnit.ok(true, "background-image: url(../); styles applied");
+					assert.ok(true, "background-image: url(../); styles applied");
 					testImage("#test-relative", function(err){
 						if(err){
-							QUnit.ok(false, err);
+							assert.ok(false, err);
 						} else {
-							QUnit.ok(true, "background-image: url(locate://); styles applied");
+							assert.ok(true, "background-image: url(locate://); styles applied");
 						}
-						QUnit.start();
-						removeMyself();
+						done();
 					});
 				}
 			});
