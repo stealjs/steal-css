@@ -13,12 +13,10 @@
 
 </head>
 <body>
-
-<div id="test-element" class="btn btn-danger">BUTTON</div>
-<script>
-	window.QUnit = window.parent.QUnit;
-	window.removeMyself = window.parent.removeMyself;
-</script>
-
+	<div id="test-element" class="btn btn-danger">BUTTON</div>
+	<script>
+		window.assert = window.parent.assert;
+		window.done = window.parent.done;
+	</script>
 </body>
 </html>

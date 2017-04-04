@@ -4,8 +4,8 @@
   "description": "CSS plugin for StealJS",
   "main": "css.js",
   "scripts": {
-    "build-1": "node test/css_paths/build.js",
-    "build-2": "node node_modules/.bin/steal-tools build --config test/css-before-js/stealconfig.js --main main --baseUrl test/css-before-js/ --minify false",
+    "build-1": "node test/css-paths/build.js",
+    "build-2": "steal-tools build --config test/css-before-js/stealconfig.js --main main --baseUrl test/css-before-js/ --minify false",
     "build-3": "node test/css-instantiated/build.js",
     "test": "npm run build-1 && npm run build-2 && npm run build-3 && npm run run-tests",
     "run-tests": "testee test/test.html --browsers firefox --reporter Spec",
