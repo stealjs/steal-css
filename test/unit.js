@@ -2,8 +2,11 @@ var helpers = require("./helpers");
 var QUnit = require("steal-qunit");
 
 QUnit.module("SSR", {
-	setup: function(){
-
+	setup: function() {
+		this.resetEnv = helpers.fakeBeingInNode();
+	},
+	teardown: function() {
+		this.resetEnv();
 	}
 });
 
@@ -30,4 +33,23 @@ QUnit.skip("Throws if there is not a document", function(assert){
 		console.log('erro', err, err.stack);
 	})
 	.then(done, done);
+});
+
+QUnit.test("updates url()s in Node", function(assert) {
+	var done = assert.async()
+	var mod = {
+		source: "background-image: url('../../../foo/bar/baz.png')",
+		address: "http://localhost/my/cool/app/main.css"
+	};
+
+	var loader = helpers.clone()
+		.loader;
+
+	loader["import"]("steal-css")
+		.then(function(css){
+			var newSrc = css.CSSModule.prototype.updateURLs.call(mod);
+
+			QUnit.equal(newSrc.indexOf("background-image: url(http://localhost/foo/bar/baz.png)"), 0);
+			done();
+		});
 });

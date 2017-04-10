@@ -34,3 +34,20 @@ exports.waitForCssRules = function(styleNode, callback) {
 		}
 	}, 10);
 };
+
+exports.fakeBeingInNode = function() {
+	process = {versions:{}};
+	var ts = Object.prototype.toString;
+	Object.prototype.toString = function(){
+		if(this === process) {
+			return "[object process]";
+		}
+		return ts.call(this);
+	};
+
+	return function(){
+		var global = steal.loader.global;
+		delete global.process;
+		Object.prototype.toString = ts;
+	};
+};
