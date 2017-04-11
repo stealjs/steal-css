@@ -154,7 +154,7 @@ CSSModule.prototype = {
 			}
 		});
 
-		if(!isNode) {
+		if(!loader.isEnv('build')) {
 			this.source = this.source + "/*# sourceURL=" + address + " */";
 			this.source = this.source.replace(resourceRegEx, function(whole, part){
 				return "url(" + steal.joinURIs(address, part) + ")";
