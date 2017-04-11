@@ -24,3 +24,7 @@ QUnit.test("css instantiated hack", function(assert){
 QUnit.test("steal-css is mapped as $css", function(assert){
 	makeIframe("dollar-css/dev.html", assert);
 });
+
+QUnit.test("css files starting with attribute selectors work", function(assert) {
+	makeIframe("css-attr-selector/dev.html", assert);
+});
