@@ -10,7 +10,7 @@
     "test": "npm run eslint && npm run build-1 && npm run build-2 && npm run build-3 && npm run run-tests",
     "run-tests": "testee test/test.html --browsers firefox --reporter Spec",
     "http-server": "http-server -p 3000 --silent",
-    "saucelabs": "npm run build-1 && npm run build-2 && npm run build-3 && node test/test-sauce-labs",
+    "saucelabs": "npm run build-1 && npm run build-2 && npm run build-3 && node test/saucelabs",
     "document": "bit-docs",
     "eslint": "eslint css.js"
   },
@@ -39,7 +39,7 @@
     "steal-qunit": "^1.0.0",
     "steal-test-helpers": "^0.2.0",
     "steal-tools": "^1.0.0",
-    "testee": "^0.2.5",
+    "test-saucelabs": "0.0.1",
     "testee": "^0.3.0",
     "wd": "^1.2.0"
   },
