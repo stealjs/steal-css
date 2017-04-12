@@ -7,11 +7,12 @@
     "build-1": "node test/css-paths/build.js",
     "build-2": "steal-tools build --config test/css-before-js/stealconfig.js --main main --baseUrl test/css-before-js/ --minify false",
     "build-3": "node test/css-instantiated/build.js",
-    "test": "npm run build-1 && npm run build-2 && npm run build-3 && npm run run-tests",
+    "test": "npm run eslint && npm run build-1 && npm run build-2 && npm run build-3 && npm run run-tests",
     "run-tests": "testee test/test.html --browsers firefox --reporter Spec",
     "http-server": "http-server -p 3000 --silent",
     "saucelabs": "npm run build-1 && npm run build-2 && npm run build-3 && node test/test-sauce-labs",
-    "document": "bit-docs"
+    "document": "bit-docs",
+    "eslint": "eslint css.js"
   },
   "repository": {
     "type": "git",
@@ -30,6 +31,7 @@
   "devDependencies": {
     "async": "^2.3.0",
     "bit-docs": "0.0.6",
+    "eslint": "^3.19.0",
     "http-server": "^0.9.0",
     "qunitjs": "~1.12.0",
     "saucelabs": "^1.4.0",
@@ -63,5 +65,19 @@
       "apis": "./docs/apis.json"
     },
     "parent": "steal-css"
+  },
+  "eslintConfig": {
+    "extends": "eslint:recommended",
+    "rules": {
+      "no-param-reassign": "error"
+    },
+    "env": {
+      "node": true,
+      "browser": true
+    },
+    "globals": {
+      "doneSsr": true,
+      "Promise": true
+    }
   }
 }
