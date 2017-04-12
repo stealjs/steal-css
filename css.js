@@ -8,7 +8,6 @@ var resourceRegEx =  /url\(['"]?([^'"\)]*)['"]?\)/g;
 
 var waitSeconds = (loader.cssOptions && loader.cssOptions.timeout)
 	? parseInt(loader.cssOptions.timeout, 10) : 60;
-var noop = function () {};
 var onloadCss = function(link, cb){
 	var styleSheets = getDocument().styleSheets,
 		i = styleSheets.length;
@@ -74,8 +73,7 @@ CSSModule.prototype = {
 
 		// inspired by https://github.com/filamentgroup/loadCSS
 		var doc = getDocument();
-		var styleSheets = doc.styleSheets;
-		var address = this.address;
+
 		var link = this.link = doc.createElement("link");
 		link.type = "text/css";
 		link.rel = "stylesheet";
@@ -107,7 +105,7 @@ CSSModule.prototype = {
 			// Weak inference targets Android < 4.4 and
 			// a fallback for IE 8 and beneath
 			if( "isApplicationInstalled" in navigator ||
-			   !link.addEventListener) {
+				!link.addEventListener) {
 				// fallback, polling styleSheets
 				onloadCss(link, loadCB);
 			} else {
