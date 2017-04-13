@@ -21,6 +21,14 @@ var onloadCss = function(link, cb){
 	});
 };
 
+function isIE9() {
+	var doc = getDocument();
+
+	// https://github.com/conditionizr/conditionizr/blob/111964e63ddda5f2db5dbc3c1587dfda9f5ca3b2/detects/ie9.js#L6
+	return doc &&
+		!!(Function('/*@cc_on return (/^9/.test(@_jscript_version) && /MSIE 9\.0(?!.*IEMobile)/i.test(navigator.userAgent)); @*/')());
+}
+
 function getDocument() {
 	if(typeof doneSsr !== "undefined" && doneSsr.globalDocument) {
 		return doneSsr.globalDocument;
@@ -59,6 +67,11 @@ function CSSModule(load, loader) {
 		this.source = loader; // this is a string
 	}
 }
+
+// required for IE9 stylesheet limit hack
+CSSModule.cssCount = 0;
+CSSModule.ie9MaxStyleSheets = 31;
+CSSModule.currentStyleSheet = null;
 
 CSSModule.prototype = {
 	injectLink: function(){
@@ -120,7 +133,6 @@ CSSModule.prototype = {
 		return this._loaded;
 	},
 
-
 	injectStyle: function(){
 		var doc = getDocument();
 		var head = getHead();
@@ -135,6 +147,27 @@ CSSModule.prototype = {
 			style.appendChild(doc.createTextNode(this.source));
 		}
 		head.appendChild(style);
+	},
+
+	/**
+	 * Inject stylesheets and re-used them to avoid IE9 limit
+	 * https://blogs.msdn.microsoft.com/ieinternals/2011/05/14/stylesheet-limits-in-internet-explorer/
+	 */
+	ie9StyleSheetLimitHack: function() {
+		var doc = getDocument();
+
+		// create the sheet to be re-used until limit is reached
+		if (!CSSModule.cssCount) {
+			CSSModule.currentStyleSheet = doc.createStyleSheet();
+		}
+
+		CSSModule.cssCount += 1;
+		CSSModule.currentStyleSheet.addImport(this.address);
+
+		// reset the count to force the creation of a new stylesheet
+		if (CSSModule.cssCount === CSSModule.ie9MaxStyleSheets) {
+			CSSModule.cssCount = 0;
+		}
 	},
 
 	// Replace @import's that don't start with a "u" or "U" and do start
@@ -217,8 +250,12 @@ if(loader.isEnv("production")) {
 		load.metadata.deps = [];
 		load.metadata.format = "css";
 		load.metadata.execute = function(){
-			if(getDocument()) {
-				css.injectStyle();
+			if (getDocument()) {
+				if (isIE9()) {
+					css.ie9StyleSheetLimitHack();
+				} else {
+					css.injectStyle();
+				}
 				css.setupLiveReload(loader, load.name);
 			}
 

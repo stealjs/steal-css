@@ -51,3 +51,31 @@ exports.fakeBeingInNode = function() {
 		Object.prototype.toString = ts;
 	};
 };
+
+/**
+ * A promise based polling function
+ * @param {Function} pred A predicate function
+ * @param {number} timeout Number of ms before the promise is rejected
+ * @param {number} interval Number of ms to execute the predicate
+ * @return {Promise}
+ */
+exports.poll = function poll(pred, timeout, interval) {
+	var pollInterval = interval || 100;
+	var endTime = Number(new Date()) + (timeout || 3000);
+
+	return new Promise(function(resolve, reject) {
+		// If the condition is met, we're done!
+		if (pred()) return resolve();
+
+		var poller = setInterval(function() {
+			if (pred()) {
+				clearInterval(poller);
+				resolve();
+			}
+			else if (Number(new Date()) >= endTime) {
+				clearInterval(poller);
+				reject(new Error("Timed out for " + pred));
+			}
+		}, pollInterval);
+	});
+};
