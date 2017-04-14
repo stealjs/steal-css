@@ -162,7 +162,7 @@ CSSModule.prototype = {
 		}
 
 		CSSModule.cssCount += 1;
-		CSSModule.currentStyleSheet.addImport(this.address);
+		CSSModule.currentStyleSheet.cssText += this.source;
 
 		// reset the count to force the creation of a new stylesheet
 		if (CSSModule.cssCount === CSSModule.ie9MaxStyleSheets) {

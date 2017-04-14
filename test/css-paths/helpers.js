@@ -24,3 +24,24 @@ exports.waitForCssRules = function(styleNode, callback) {
 		}
 	}, 10);
 };
+
+exports.poll = function poll(pred, timeout, interval) {
+	var pollInterval = interval || 100;
+	var endTime = Number(new Date()) + (timeout || 3000);
+
+	return new Promise(function(resolve, reject) {
+		// If the condition is met, we're done!
+		if (pred()) return resolve();
+
+		var poller = setInterval(function() {
+			if (pred()) {
+				clearInterval(poller);
+				resolve();
+			}
+			else if (Number(new Date()) >= endTime) {
+				clearInterval(poller);
+				reject(new Error("Timed out for " + pred));
+			}
+		}, pollInterval);
+	});
+};
