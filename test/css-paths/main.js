@@ -1,6 +1,10 @@
-import "./folder/main.css";
-import helpers from 'helpers';
-import steal from "@steal";
+var steal =  require("@steal");
+var helpers = require("helpers");
+
+require("./folder/main.css");
+
+/* global assert, done, $ */
+/* eslint no-console: off */
 
 var testImage = function(selector) {
 	return new Promise(function(resolve, reject) {
@@ -21,8 +25,11 @@ var testImage = function(selector) {
 };
 
 function waitForCssToBeApplied() {
-	return new Promise(function(resolve, reject) {
-		setTimeout(resolve, 300);
+	return helpers.poll(function() {
+		var btn = $(".btn.btn-danger");
+
+		return btn.css("display") === "inline-block" &&
+			btn.css("backgroundColor") === "rgb(255, 0, 0)";
 	});
 }
 

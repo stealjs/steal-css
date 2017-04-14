@@ -3,6 +3,8 @@ var makeIframe = require("./make-iframe");
 
 require("./unit");
 
+QUnit.config.testTimeout = 10000;
+
 QUnit.module("steal-css plugin");
 
 QUnit.test("wait for css until it is loaded", function(assert){
@@ -27,4 +29,8 @@ QUnit.test("steal-css is mapped as $css", function(assert){
 
 QUnit.test("css files starting with attribute selectors work", function(assert) {
 	makeIframe("css-attr-selector/dev.html", assert);
+});
+
+QUnit.test("should handle IE8/9 stylesheet limit", function(assert) {
+	makeIframe("ie-stylesheet-limit/dev.html", assert)
 });
