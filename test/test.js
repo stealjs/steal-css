@@ -32,5 +32,9 @@ QUnit.test("css files starting with attribute selectors work", function(assert) 
 });
 
 QUnit.test("should handle IE8/9 stylesheet limit", function(assert) {
-	makeIframe("ie-stylesheet-limit/dev.html", assert)
+	makeIframe("ie-stylesheet-limit/dev.html", assert);
+});
+
+QUnit.test("local @import should work in production", function(assert) {
+	makeIframe("css-local-import/prod.html", assert);
 });

@@ -10,5 +10,9 @@ Promise.resolve()
 	})
 	.then(function() {
 		console.log("\ncreating build for css-instantiated");
-		return require("./css-instantiated/build.js");
+		return require("./css-instantiated/build");
+	})
+	.then(function() {
+		console.log("\ncreating build for css-local-import");
+		return require("./css-local-import/build");
 	});
