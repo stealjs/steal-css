@@ -1,14 +1,7 @@
 var helpers = require("./helpers");
 var QUnit = require("steal-qunit");
 
-QUnit.module("SSR", {
-	setup: function() {
-		this.resetEnv = helpers.fakeBeingInNode();
-	},
-	teardown: function() {
-		this.resetEnv();
-	}
-});
+var resetEnv = helpers.fakeBeingInNode();
 
 // Skipping this for now as I can't find a good way to mock the global document
 QUnit.skip("Throws if there is not a document", function(assert){
@@ -30,13 +23,13 @@ QUnit.skip("Throws if there is not a document", function(assert){
 		console.log('here');
 		QUnit.ok(false, "This should have failed");
 	}, function(err){
-		console.log('erro', err, err.stack);
+		console.log('error', err, err.stack);
 	})
 	.then(done, done);
 });
 
 QUnit.test("updates url()s in Node", function(assert) {
-	var done = assert.async()
+	var done = assert.async();
 	var mod = {
 		source: "background-image: url('../../../foo/bar/baz.png')",
 		address: "http://localhost/my/cool/app/main.css"
@@ -50,6 +43,31 @@ QUnit.test("updates url()s in Node", function(assert) {
 			var newSrc = css.CSSModule.prototype.updateURLs.call(mod);
 
 			QUnit.equal(newSrc.indexOf("background-image: url(http://localhost/foo/bar/baz.png)"), 0);
+			
+			resetEnv();
+			resetEnv = helpers.fakeBeingInZombie();
 			done();
 		});
+});
+
+
+QUnit.test("injectLink in Zombie", function(assert) {
+	var done = assert.async();
+	var loader = helpers.clone()
+		.loader;
+
+	resetEnv = helpers.fakeBeingInZombie();
+	QUnit.equal(navigator.noUI, true);
+
+	loader["import"]("steal-css")
+		.then(function(css){
+			css.CSSModule.prototype.address = "css-before-js/main.css";
+
+			var injectLink = css.CSSModule.prototype.injectLink();
+
+			injectLink.then(function(){
+				resetEnv();
+				done();
+			}, done);
+		}, done);
 });

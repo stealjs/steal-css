@@ -52,6 +52,15 @@ exports.fakeBeingInNode = function() {
 	};
 };
 
+exports.fakeBeingInZombie = function() {
+	navigator.noUI = true;
+
+	return function(){
+		var global = steal.loader.global;
+		delete global.navigator.noUI;
+	};
+};
+
 /**
  * A promise based polling function
  * @param {Function} pred A predicate function
