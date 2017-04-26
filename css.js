@@ -119,11 +119,13 @@ CSSModule.prototype = {
 			// Weak inference targets Android < 4.4 and
 			// a fallback for IE 8 and beneath
 			if( "isApplicationInstalled" in navigator ||
-				// Zombie
-				navigator.noUI ||
+				
 				!link.addEventListener) {
 				// fallback, polling styleSheets
 				onloadCss(link, loadCB);
+			} else if(navigator.noUI){
+				// Zombie
+				loadCB();
 			} else {
 				// attach onload event for all modern browser
 				link.addEventListener( "load", loadCB );
