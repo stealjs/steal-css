@@ -115,12 +115,17 @@ CSSModule.prototype = {
 			//	* Android 4.3 (Samsung Galaxy S4, Browserstack)
 			//	* Android 4.2 Browser (Samsung Galaxy SIII Mini GT-I8200L)
 			//	* Android 2.3 (Pantech Burst P9070)
+			//  * Zombie headless browser
 			// Weak inference targets Android < 4.4 and
 			// a fallback for IE 8 and beneath
 			if( "isApplicationInstalled" in navigator ||
+				
 				!link.addEventListener) {
 				// fallback, polling styleSheets
 				onloadCss(link, loadCB);
+			} else if(navigator.noUI){
+				// Zombie
+				loadCB();
 			} else {
 				// attach onload event for all modern browser
 				link.addEventListener( "load", loadCB );
