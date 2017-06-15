@@ -35,7 +35,7 @@
     "http-server": "^0.9.0",
     "qunitjs": "~2.1.0",
     "saucelabs": "^1.4.0",
-    "steal": "^1.0.0",
+    "steal": "^1.5.4",
     "steal-qunit": "^1.0.0",
     "steal-test-helpers": "^0.2.0",
     "steal-tools": "^1.0.0",
