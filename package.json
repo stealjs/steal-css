@@ -29,7 +29,7 @@
   },
   "homepage": "https://github.com/stealjs/steal-css",
   "devDependencies": {
-    "async": "^2.3.0",
+    "async": "^2.5.0",
     "bit-docs": "0.0.7",
     "eslint": "^3.19.0",
     "http-server": "^0.9.0",
