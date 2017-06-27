@@ -70,7 +70,8 @@
   "eslintConfig": {
     "extends": "eslint:recommended",
     "rules": {
-      "no-param-reassign": "error"
+      "no-param-reassign": "error",
+      "no-useless-escape": "off"
     },
     "env": {
       "node": true,
