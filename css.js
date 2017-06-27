@@ -118,8 +118,7 @@ CSSModule.prototype = {
 			//  * Zombie headless browser
 			// Weak inference targets Android < 4.4 and
 			// a fallback for IE 8 and beneath
-			if( "isApplicationInstalled" in navigator ||
-				!link.addEventListener) {
+			if("isApplicationInstalled" in navigator || !link.addEventListener) {
 				// fallback, polling styleSheets
 				onloadCss(link, loadCB);
 			} else if(navigator.noUI){
@@ -282,3 +281,4 @@ exports.getHead = getHead;
 exports.locateScheme = true;
 exports.buildType = "css";
 exports.includeInBuild = true;
+exports.pluginBuilder = "steal-css/slim";
