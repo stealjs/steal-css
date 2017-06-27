@@ -119,7 +119,6 @@ CSSModule.prototype = {
 			// Weak inference targets Android < 4.4 and
 			// a fallback for IE 8 and beneath
 			if( "isApplicationInstalled" in navigator ||
-				
 				!link.addEventListener) {
 				// fallback, polling styleSheets
 				onloadCss(link, loadCB);
@@ -146,11 +145,16 @@ CSSModule.prototype = {
 		// make source load relative to the current page
 		style.type = 'text/css';
 
-		if (style.styleSheet){
+		// Starting with IE11, `styleSheet` isn't support but `sheet` is
+		// https://msdn.microsoft.com/en-us/library/dd347030(v=vs.85).aspx
+		if (style.sheet) {
+			style.sheet.cssText = this.source;
+		} else if (style.styleSheet) {
 			style.styleSheet.cssText = this.source;
 		} else {
 			style.appendChild(doc.createTextNode(this.source));
 		}
+
 		head.appendChild(style);
 	},
 
