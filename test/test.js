@@ -2,6 +2,7 @@ var QUnit = require("steal-qunit");
 var makeIframe = require("./make-iframe");
 
 require("./unit");
+require("./slim");
 
 QUnit.config.testTimeout = 10000;
 
