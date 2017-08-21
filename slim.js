@@ -12,9 +12,12 @@ CssModule.waitTimeout = 60;
 
 CssModule.prototype.linkExists = function() {
 	var styleSheets = document.styleSheets;
+	var anchor = document.createElement("a");
+	anchor.href = this.address;
+	var href = anchor.href;
 
 	for (var i = 0; i < styleSheets.length; ++i) {
-		if (this.address === styleSheets[i].href) {
+		if (href === styleSheets[i].href) {
 			return true;
 		}
 	}
