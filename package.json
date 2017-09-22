@@ -30,7 +30,7 @@
   "homepage": "https://github.com/stealjs/steal-css",
   "devDependencies": {
     "async": "^2.3.0",
-    "bit-docs": "0.0.7",
+    "bit-docs": "0.0.8-0",
     "eslint": "^4.1.1",
     "http-server": "^0.10.0",
     "qunitjs": "~2.4.0",
