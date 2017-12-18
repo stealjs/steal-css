@@ -39,7 +39,7 @@
     "steal-qunit": "^1.0.0",
     "steal-test-helpers": "^0.2.0",
     "steal-tools": "^1.0.0",
-    "test-saucelabs": "0.0.2",
+    "test-saucelabs": "0.0.3",
     "testee": "^0.6.1",
     "wd": "^1.2.0"
   },
