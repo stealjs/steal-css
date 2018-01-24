@@ -10,15 +10,24 @@ function CssModule(address) {
 // timeout in seconds
 CssModule.waitTimeout = 60;
 
-CssModule.prototype.linkExists = function() {
-	var styleSheets = document.styleSheets;
+// The slim build does not resolve to URLs, so this trick is needed
+// to get the url and use it to check if the link was already added
+// to the head
+CssModule.prototype.getLinkUrl = function() {
 	var anchor = document.createElement("a");
 	anchor.href = this.address;
-	var href = anchor.href;
+	return anchor.href;
+};
 
-	for (var i = 0; i < styleSheets.length; ++i) {
-		if (href === styleSheets[i].href) {
-			return true;
+CssModule.prototype.linkExists = function() {
+	var styleSheets = document.querySelectorAll('[rel="stylesheet"]');
+
+	if (styleSheets != null) {
+		var href = this.getLinkUrl();
+		for (var i = 0; i < styleSheets.length; ++i) {
+			if (href === styleSheets[i].href) {
+				return true;
+			}
 		}
 	}
 
