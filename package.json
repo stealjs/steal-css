@@ -31,7 +31,7 @@
   "devDependencies": {
     "async": "^2.3.0",
     "bit-docs": "0.0.7",
-    "eslint": "^4.1.1",
+    "eslint": "^5.0.0",
     "http-server": "^0.10.0",
     "qunitjs": "~2.4.0",
     "saucelabs": "^1.4.0",
