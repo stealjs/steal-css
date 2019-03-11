@@ -34,7 +34,7 @@
     "eslint": "^4.1.1",
     "http-server": "^0.10.0",
     "qunitjs": "~2.4.0",
-    "saucelabs": "^1.4.0",
+    "saucelabs": "^2.0.0",
     "steal": "^1.0.0",
     "steal-qunit": "^1.0.0",
     "steal-test-helpers": "^0.2.0",
