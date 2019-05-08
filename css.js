@@ -242,11 +242,51 @@ CSSModule.prototype = {
 	}
 };
 
+function clone() {
+	return this.cloneNode(true);
+}
 
 if(loader.isEnv("production")) {
+	function findCssBundle(loader, load) {
+		var name = load.name;
+		var bundles = loader.bundles || {};
+		for(var bundleName in bundles) {
+			var items = bundles[bundleName];
+			if(items.indexOf(name) !== -1) {
+				var moduleLoad = loader.getModuleLoad(bundleName);
+				if(moduleLoad) {
+					return moduleLoad;
+				}
+			}
+		}
+	}
+
 	exports.fetch = function(load) {
-		var css = new CSSModule(load.address);
+		var css = load.metadata.cssModule = new CSSModule(load.address);
 		return css.injectLink();
+	};
+	exports.instantiate = function(load) {
+		var loader = this;
+		load.metadata.format = "css";
+		load.metadata.execute = function() {
+			var link;
+			var css = load.metadata.cssModule;
+			if(!css) {
+				var bundleLoad = findCssBundle(loader, load);
+				if(bundleLoad) {
+					css = bundleLoad.metadata.cssModule;
+				}
+			}
+			if(css) {
+				link = css.link;
+			}
+
+			return loader.newModule({
+				source: "",
+				"default": link,
+				clone: clone.bind(link)
+			});
+		};
 	};
 } else {
 	exports.instantiate = function(load) {
@@ -268,7 +308,9 @@ if(loader.isEnv("production")) {
 			}
 
 			return loader.newModule({
-				source: css.source
+				source: css.source,
+				"default": css.style,
+				clone: clone.bind(css.style)
 			});
 		};
 	};

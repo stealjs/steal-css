@@ -35,3 +35,13 @@ QUnit.test("css files starting with attribute selectors work", function(assert) 
 QUnit.test("should handle IE8/9 stylesheet limit", function(assert) {
 	makeIframe("ie-stylesheet-limit/dev.html", assert)
 });
+
+if("ShadowRoot" in window) {
+	QUnit.test("The default export is the style/link node", function(assert) {
+		makeIframe("shadow/dev.html", assert);
+	});
+
+	QUnit.test("The default export is the style/link node - production", function(assert) {
+		makeIframe("shadow/prod.html", assert);
+	});
+}
