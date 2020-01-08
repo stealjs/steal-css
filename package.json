@@ -41,7 +41,7 @@
     "steal-tools": "^1.0.0",
     "test-saucelabs": "0.0.2",
     "testee": "^0.9.1",
-    "wd": "^1.2.0"
+    "wd": "1.11.4"
   },
   "steal": {
     "ext": {
